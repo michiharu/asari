@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.js": "/asari/static/js/main.9f03e216.chunk.js",
+    "main.js.map": "/asari/static/js/main.9f03e216.chunk.js.map",
+    "runtime-main.js": "/asari/static/js/runtime-main.475522b0.js",
+    "runtime-main.js.map": "/asari/static/js/runtime-main.475522b0.js.map",
+    "static/js/2.64bc9394.chunk.js": "/asari/static/js/2.64bc9394.chunk.js",
+    "static/js/2.64bc9394.chunk.js.map": "/asari/static/js/2.64bc9394.chunk.js.map",
+    "index.html": "/asari/index.html",
+    "precache-manifest.084d6a9f3c8bff0535f0b98ce462dced.js": "/asari/precache-manifest.084d6a9f3c8bff0535f0b98ce462dced.js",
+    "service-worker.js": "/asari/service-worker.js",
+    "static/js/2.64bc9394.chunk.js.LICENSE.txt": "/asari/static/js/2.64bc9394.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.475522b0.js",
+    "static/js/2.64bc9394.chunk.js",
+    "static/js/main.9f03e216.chunk.js"
+  ]
+}
