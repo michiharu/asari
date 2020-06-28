@@ -22,15 +22,7 @@ import { ColorPicker } from "./ColorPicker";
 import RuleBox from "./RuleBox";
 import FirstRow from "./FirstRow";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1,
-    },
-  })
-);
-
-const defaultColors = ["#BBBBBB", "#DDDDDD", "#FFFFFF"];
+const defaultColors = ["#357AE8", "#D6784B", "#FFFFFF"];
 
 export const size = "calc(100% * 1 / 20)";
 
@@ -47,7 +39,11 @@ const createInitTwoCellRules = (colors: string[]): Omit<Rule, "index">[] => {
   return _(
     [0, 1].map((right) =>
       colors.map((__, first) =>
-        colors.map((___, second) => ({ pattarn: [first, second], isLeft: !Boolean(right), selectedIndex: 0 }))
+        colors.map((___, second) => ({
+          pattarn: [first, second],
+          isLeft: !Boolean(right),
+          selectedIndex: _.random(0, colors.length - 1),
+        }))
       )
     )
   )
@@ -61,7 +57,12 @@ const t = (colors: string[]) => {
 const createInitThreeCellRules = (colors: string[]): Omit<Rule, "index">[] => {
   return _(
     colors.map((__, first) =>
-      colors.map((___, second) => colors.map((___, third) => ({ pattarn: [first, second, third], selectedIndex: 0 })))
+      colors.map((___, second) =>
+        colors.map((___, third) => ({
+          pattarn: [first, second, third],
+          selectedIndex: _.random(0, colors.length - 1),
+        }))
+      )
     )
   )
     .flattenDeep()
@@ -106,12 +107,12 @@ export default function App() {
   const [pickerIndex, setPickerIndex] = useState<number | undefined>();
   const [coloringRules, setColoringRules] = useState<Rule[]>(createCellRules(colors));
   const [colCount, setColCount] = useState(12);
-  const [firstRow, setFirstRow] = useState([...Array(12)].map(() => 0));
+  const [firstRow, setFirstRow] = useState([...Array(12)].map(() => _.random(0, colors.length - 1)));
 
   const handleColorCount = (e: any, countString: string) => {
     const count = Number(countString);
     setColorCount(count);
-    const nextColors = defaultColors.slice(0, count)
+    const nextColors = defaultColors.slice(0, count);
     setColors(nextColors);
     setColoringRules(createCellRules(nextColors));
   };
@@ -132,7 +133,7 @@ export default function App() {
     if (value < colCount) {
       setFirstRow(firstRow.filter((__, index) => index < value));
     } else {
-      setFirstRow(firstRow.concat([...Array(value - colCount)].map(() => 0)));
+      setFirstRow(firstRow.concat([...Array(value - colCount)].map(() => _.random(0, colors.length - 1))));
     }
     setColCount(value);
   };
@@ -152,7 +153,7 @@ export default function App() {
     setAnchorEl(null);
   };
 
-  const rows = coloringAllCell(coloringRules, firstRow, 20);
+  const rows = coloringAllCell(coloringRules, firstRow, 50);
 
   return (
     <div>
@@ -206,7 +207,8 @@ export default function App() {
           </Box>
         </Box>
         <Box flexGrow={1} p={2}>
-          <Typography variant="h3">アサリの貝殻模様シュミレーター</Typography>
+          <Typography variant="caption">Elementary Cellular Automaton</Typography>
+          <Typography variant="h3">アサリの模様</Typography>
           <Box>
             <Box pt={5}>
               <Box mt={2} ml="calc(100% * 5.25 / 42 )" width="calc(100% * 35.7 / 42)">
