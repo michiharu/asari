@@ -1,11 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import _ from "lodash";
 import equal from "fast-deep-equal";
 import {
-  makeStyles,
-  createStyles,
-  Theme,
-  Container,
   Typography,
   Box,
   FormControl,
@@ -22,7 +18,7 @@ import { ColorPicker } from "./ColorPicker";
 import RuleBox from "./RuleBox";
 import FirstRow from "./FirstRow";
 
-const defaultColors = ["#357AE8", "#D6784B", "#FFFFFF"];
+const defaultColors = ["#5FF7EE", "#D6784B", "#FFFFFF"];
 
 export const size = "calc(100% * 1 / 20)";
 
@@ -49,9 +45,6 @@ const createInitTwoCellRules = (colors: string[]): Omit<Rule, "index">[] => {
   )
     .flattenDeep()
     .value();
-};
-const t = (colors: string[]) => {
-  return;
 };
 
 const createInitThreeCellRules = (colors: string[]): Omit<Rule, "index">[] => {

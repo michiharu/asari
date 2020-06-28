@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Paper, IconButton, Popover, Typography, Divider, Card, CardActionArea } from "@material-ui/core";
+import { Box, Popover, Card, CardActionArea } from "@material-ui/core";
 import PaletteIcon from "@material-ui/icons/Palette";
 import { cellSize, size } from "./App";
 
