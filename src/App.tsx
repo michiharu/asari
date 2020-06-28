@@ -78,6 +78,8 @@ const coloringNextRow = (rules: Rule[], beforeRow: number[]): number[] => {
     if (index === last) {
       return rules.find((r) => equal(r.pattarn, [arr[last - 1], arr[last]]) && r.isLeft === false)!.selectedIndex;
     }
+    console.log(rules)
+    console.log([arr[index - 1], arr[index], arr[index + 1]])
     return rules.find((r) => equal(r.pattarn, [arr[index - 1], arr[index], arr[index + 1]]))!.selectedIndex;
   });
 };
@@ -108,6 +110,7 @@ export default function App() {
     const nextColors = defaultColors.slice(0, count);
     setColors(nextColors);
     setColoringRules(createCellRules(nextColors));
+    setFirstRow(firstRow.map(c => c % nextColors.length))
   };
 
   const setColor = (index: number) => (color: string) => {
