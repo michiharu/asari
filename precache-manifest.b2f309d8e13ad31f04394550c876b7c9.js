@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "aa128cb2a1e4833bca9e73d789ade7b6",
+    "revision": "6464940fe78f27405c37b814b175dcf3",
     "url": "/asari/index.html"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/asari/static/js/2.64bc9394.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "2f068c07f7581fd39fcf",
-    "url": "/asari/static/js/main.9f03e216.chunk.js"
+    "revision": "0a771da0258e80315bf4",
+    "url": "/asari/static/js/main.2bbd160d.chunk.js"
   },
   {
     "revision": "c1ab432fa80bb33dbdf3",
