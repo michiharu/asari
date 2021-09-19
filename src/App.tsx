@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import _ from "lodash";
-import equal from "fast-deep-equal";
+import equal from "deep-equal";
 import {
   Typography,
   Box,
@@ -20,71 +19,61 @@ import FirstRow from "./FirstRow";
 
 const defaultColors = ["#5FF7EE", "#D6784B", "#FFFFFF"];
 
-export const size = "calc(100% * 1 / 20)";
+const colCount = 61;
+export const size = `calc(100% * 1 / ${colCount})`;
 
 export const cellSize = 48;
 
 export type Rule = {
   index: number;
-  pattarn: number[];
-  isLeft?: boolean;
+  pattarn: [number, number, number];
   selectedIndex: number;
 };
 
-const createInitTwoCellRules = (colors: string[]): Omit<Rule, "index">[] => {
-  return _(
-    [0, 1].map((right) =>
-      colors.map((__, first) =>
-        colors.map((___, second) => ({
-          pattarn: [first, second],
-          isLeft: !Boolean(right),
-          selectedIndex: _.random(0, colors.length - 1),
-        }))
-      )
-    )
-  )
-    .flattenDeep()
-    .value();
-};
+const range = (index: number): number[] => [...Array(index)].map((_, i) => i);
+const random = (int: number): number => Math.floor(Math.random() * int);
 
 const createInitThreeCellRules = (colors: string[]): Omit<Rule, "index">[] => {
-  return _(
-    colors.map((__, first) =>
-      colors.map((___, second) =>
-        colors.map((___, third) => ({
+  const len = colors.length;
+  const result: Omit<Rule, "index">[] = [];
+  range(len).forEach((first) =>
+    range(len).forEach((second) =>
+      range(len).forEach((third) =>
+        result.push({
           pattarn: [first, second, third],
-          selectedIndex: _.random(0, colors.length - 1),
-        }))
+          selectedIndex: random(len),
+        })
       )
     )
-  )
-    .flattenDeep()
-    .value();
+  );
+  return result;
 };
 
 const createCellRules = (colors: string[]): Rule[] => {
-  return _.concat(createInitTwoCellRules(colors), createInitThreeCellRules(colors)).map((r, index) => ({
-    ...r,
-    index,
-  }));
+  return createInitThreeCellRules(colors).map((r, index) => ({ ...r, index }));
 };
 
-const coloringNextRow = (rules: Rule[], beforeRow: number[]): number[] => {
-  const last = beforeRow.length - 1;
-  return beforeRow.map((__, index, arr) => {
-    if (index === 0) {
-      return rules.find((r) => equal(r.pattarn, [arr[0], arr[1]]) && r.isLeft)!.selectedIndex;
-    }
-    if (index === last) {
-      return rules.find((r) => equal(r.pattarn, [arr[last - 1], arr[last]]) && r.isLeft === false)!.selectedIndex;
-    }
-    console.log(rules)
-    console.log([arr[index - 1], arr[index], arr[index + 1]])
-    return rules.find((r) => equal(r.pattarn, [arr[index - 1], arr[index], arr[index + 1]]))!.selectedIndex;
-  });
+const coloringNextRow = (rules: Rule[], before: number[]): number[] => {
+  const nextLength = before.length - 2;
+  if (nextLength < 1) return [];
+  const result: number[] = [];
+  for (let i = 0; i < nextLength; i++) {
+    const rule = rules.find((r) =>
+      equal(r.pattarn, [before[i], before[i + 1], before[i + 2]])
+    );
+    if (!rule) throw new Error();
+    result.push(rule.selectedIndex);
+  }
+  return result;
 };
 
-const coloringAllCell = (rules: Rule[], firstRow: number[], rowCount: number): number[][] => {
+const coloringAllCell = (
+  rules: Rule[],
+  firstRow: number[],
+  rowCount: number
+): number[][] => {
+  console.log(firstRow);
+
   const rows: number[][] = [];
   let beforeRow = firstRow;
   for (let i = 0; i < rowCount; i++) {
@@ -97,12 +86,15 @@ const coloringAllCell = (rules: Rule[], firstRow: number[], rowCount: number): n
 };
 
 export default function App() {
-  const [colorCount, setColorCount] = useState(2);
+  const [colorCount, setColorCount] = useState(3);
   const [colors, setColors] = useState(defaultColors.slice(0, colorCount));
   const [pickerIndex, setPickerIndex] = useState<number | undefined>();
-  const [coloringRules, setColoringRules] = useState<Rule[]>(createCellRules(colors));
-  const [colCount, setColCount] = useState(12);
-  const [firstRow, setFirstRow] = useState([...Array(12)].map(() => _.random(0, colors.length - 1)));
+  const [coloringRules, setColoringRules] = useState<Rule[]>(
+    createCellRules(colors)
+  );
+  const [firstRow, setFirstRow] = useState(
+    range(colCount).map(() => random(colors.length))
+  );
 
   const handleColorCount = (e: any, countString: string) => {
     const count = Number(countString);
@@ -110,7 +102,7 @@ export default function App() {
     const nextColors = defaultColors.slice(0, count);
     setColors(nextColors);
     setColoringRules(createCellRules(nextColors));
-    setFirstRow(firstRow.map(c => c % nextColors.length))
+    setFirstRow(firstRow.map((c) => c % nextColors.length));
   };
 
   const setColor = (index: number) => (color: string) => {
@@ -118,20 +110,11 @@ export default function App() {
   };
 
   const handleSelectCellColorIndex = (rule: Rule, selected: number) => {
-    setColoringRules(coloringRules.map((r, i) => (i === rule.index ? { ...r, selectedIndex: selected } : r)));
-  };
-
-  const handleColCount = (e: any, v: number | number[]) => {
-    const value = v as number;
-    if (value === colCount) {
-      return;
-    }
-    if (value < colCount) {
-      setFirstRow(firstRow.filter((__, index) => index < value));
-    } else {
-      setFirstRow(firstRow.concat([...Array(value - colCount)].map(() => _.random(0, colors.length - 1))));
-    }
-    setColCount(value);
+    setColoringRules(
+      coloringRules.map((r, i) =>
+        i === rule.index ? { ...r, selectedIndex: selected } : r
+      )
+    );
   };
 
   const handleFirstSelect = (index: number, colorIndex: number) => {
@@ -140,10 +123,11 @@ export default function App() {
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  const handleOpen = (index: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-    setPickerIndex(index);
-  };
+  const handleOpen =
+    (index: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget);
+      setPickerIndex(index);
+    };
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -154,7 +138,12 @@ export default function App() {
   return (
     <div>
       <Box display="flex">
-        <Box p={2} bgcolor="#0001" maxHeight="100vh" style={{ overflow: "scroll" }}>
+        <Box
+          p={2}
+          bgcolor="#0001"
+          maxHeight="100vh"
+          style={{ overflow: "scroll" }}
+        >
           <Box>
             <FormControl component="fieldset">
               <FormLabel component="legend">色の数</FormLabel>
@@ -198,29 +187,30 @@ export default function App() {
           <Box pt={2}>
             <Typography>ルール</Typography>
             {coloringRules.map((rule) => (
-              <RuleBox allColors={colors} rule={rule} select={handleSelectCellColorIndex} />
+              <RuleBox
+                allColors={colors}
+                rule={rule}
+                select={handleSelectCellColorIndex}
+              />
             ))}
           </Box>
         </Box>
         <Box flexGrow={1} p={2}>
-          <Typography variant="caption">Elementary Cellular Automaton</Typography>
+          <Typography variant="caption">
+            Elementary Cellular Automaton
+          </Typography>
           <Typography variant="h3">アサリの模様</Typography>
-          <Box>
-            <Box pt={5}>
-              <Box mt={2} ml="calc(100% * 5.25 / 42 )" width="calc(100% * 35.7 / 42)">
-                <Slider
-                  defaultValue={colCount}
-                  valueLabelDisplay="auto"
-                  marks
-                  min={3}
-                  max={20}
-                  onChangeCommitted={handleColCount}
-                />
-              </Box>
-            </Box>
-            <FirstRow allColors={colors} firstRow={firstRow} firstSelect={handleFirstSelect} />
-            {rows.map((row) => (
+          <Box pt={5}>
+            <FirstRow
+              allColors={colors}
+              firstRow={firstRow}
+              firstSelect={handleFirstSelect}
+            />
+            {rows.map((row, i) => (
               <Box display="flex">
+                {range(i + 1).map((index) => (
+                  <Box key={index} width={size} pt={size} bgcolor={"#0000"} />
+                ))}
                 {row.map((colorIndex, index) => (
                   <Box
                     key={index}
