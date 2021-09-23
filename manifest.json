@@ -1,6 +1,6 @@
 {
-  "short_name": "Your Orders",
-  "name": "Your Orders",
+  "short_name": "asari simulator",
+  "name": "asari",
   "icons": [
     {
       "src": "favicon.ico",
