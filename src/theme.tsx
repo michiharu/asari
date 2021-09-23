@@ -1,15 +1,11 @@
-import red from '@material-ui/core/colors/red';
-import { createMuiTheme } from '@material-ui/core/styles';
-import { blue, pink } from '@material-ui/core/colors';
+import { createTheme } from '@mui/material';
+import { blue, pink } from '@mui/material/colors';
 
 // A custom theme for this app
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     primary: blue,
     secondary: pink,
-    error: {
-      main: red.A400,
-    },
     background: {
       default: '#fff',
     },

@@ -1,31 +1,19 @@
-import React from "react";
-import {
-  Box,
-  IconButton,
-  Popover,
-  Typography,
-  Card,
-  CardActionArea,
-} from "@material-ui/core";
-import PaletteIcon from "@material-ui/icons/Palette";
-import { cellSize, Rule } from "./App";
-
+import React from 'react';
+import { Box, Popover, Typography, Card, CardActionArea } from '@mui/material';
+import PaletteIcon from '@mui/icons-material/Palette';
+import { cellSize } from './App';
 interface Props {
   allColors: string[];
-  rule: Rule;
-  select: (rule: Rule, selected: number) => void;
+  index: number;
+  id: string;
+  selected: number;
+  select: (id: string, selected: number) => void;
 }
 
-const transparent = "#0000";
-const blank = -1;
+const RuleBox: React.FC<Props> = (props) => {
+  const { allColors, index, id, selected, select } = props;
 
-export default function RuleBox(props: Props) {
-  const { allColors, rule, select } = props;
-  const { index, pattarn, selectedIndex } = rule;
-
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -35,70 +23,52 @@ export default function RuleBox(props: Props) {
     setAnchorEl(null);
   };
 
-  const handleSelectColor = (index: number) => () => {
+  const handleSelectColor = (next: number) => () => {
     setAnchorEl(null);
-    select(rule, index);
+    select(id, next);
   };
 
   const open = Boolean(anchorEl);
 
-  const cells = [selectedIndex];
   return (
     <Box py={1}>
-      <Typography variant="caption">{`No. ${index + 1}`}</Typography>
-      <Box
-        display="flex"
-        justifyContent="center"
-        width={cellSize * pattarn.length}
-      >
-        {pattarn.map((colorIndex, i) => (
-          <Box
-            key={i}
-            width={cellSize}
-            height={cellSize}
-            bgcolor={allColors[colorIndex]}
-            borderRadius={4}
-          />
+      <Typography variant="caption" sx={{ ml: 1 }}>{`No. ${index + 1}`}</Typography>
+      <Box display="flex" justifyContent="center">
+        {id.split('-').map((colorIndex, i) => (
+          <Card key={i} sx={{ width: cellSize, height: cellSize, ml: i === 0 ? 0 : 1 }}>
+            <Box width={cellSize} height={cellSize} bgcolor={allColors[Number(colorIndex)]} />
+          </Card>
         ))}
       </Box>
-      <Box
-        display="flex"
-        justifyContent="center"
-        width={cellSize * pattarn.length}
-      >
-        {cells.map((colorIndex) => {
-          if (colorIndex === blank) {
-            return (
-              <Box width={cellSize} height={cellSize} bgcolor={transparent} />
-            );
-          }
-          return (
-            <Box bgcolor={allColors[colorIndex]} borderRadius={4}>
-              <IconButton onClick={handleOpen}>
-                <PaletteIcon />
-              </IconButton>
+      <Box display="flex" justifyContent="center" mt={1}>
+        <Card style={{ width: cellSize, height: cellSize }}>
+          <CardActionArea onClick={handleOpen}>
+            <Box
+              width={cellSize}
+              height={cellSize}
+              bgcolor={allColors[selected]}
+              sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            >
+              <PaletteIcon />
             </Box>
-          );
-        })}
+          </CardActionArea>
+        </Card>
         <Popover
           open={open}
           anchorEl={anchorEl}
           onClose={handleClose}
           anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center",
+            vertical: 'bottom',
+            horizontal: 'center',
           }}
           transformOrigin={{
-            vertical: "top",
-            horizontal: "center",
+            vertical: 'top',
+            horizontal: 'center',
           }}
         >
           <Box display="flex">
             {allColors.map((color, colorIndex) => (
-              <Card
-                key={colorIndex}
-                style={{ width: cellSize, height: cellSize }}
-              >
+              <Card key={colorIndex} style={{ width: cellSize, height: cellSize }}>
                 <CardActionArea onClick={handleSelectColor(colorIndex)}>
                   <Box width={cellSize} height={cellSize} bgcolor={color} />
                 </CardActionArea>
@@ -109,4 +79,6 @@ export default function RuleBox(props: Props) {
       </Box>
     </Box>
   );
-}
+};
+
+export default RuleBox;
