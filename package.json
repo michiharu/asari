@@ -34,9 +34,7 @@
     "eslint": "7.32.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-react": "7.25.3",
-    "fixpack": "^4.0.0",
     "gh-pages": "^3.2.3",
-    "npm-check-updates": "^11.8.5",
     "prettier": "2.4.1",
     "typescript": "4.4.3"
   },
@@ -47,11 +45,8 @@
     "deploy": "gh-pages -d build",
     "eject": "react-scripts eject",
     "fix": "npm run format && npm run lint",
-    "fixpack": "fixpack",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint --fix --ext .ts,.tsx ./src",
-    "ncu": "ncu",
-    "ncu:upgrade": "ncu -u",
     "predeploy": "npm run build",
     "start": "react-scripts start",
     "test": "react-scripts test"
